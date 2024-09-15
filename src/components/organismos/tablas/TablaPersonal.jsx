@@ -16,6 +16,12 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { FaArrowsAltV } from "react-icons/fa";
+import { PersonalService } from "../../../services/PersonalService";
+import { usePersonalStore } from "../../../store/PersonalStore";
+import { useQueryClient } from "@tanstack/react-query";
+
+// import { useTable, useGlobalFilter } from '@tanstack/react-table';
+
 export function TablaPersonal({
   data,
   SetopenRegistro,
@@ -26,9 +32,9 @@ export function TablaPersonal({
   const [pagina, setPagina] = useState(1);
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
-
-  const { eliminarCategoria } = useCategoriasStore();
-  function eliminar(p) {
+  const { globalFilter,setFlobalFilter } = usePersonalStore()
+  const qc = useQueryClient();
+  function eliminar(userId) {
     Swal.fire({
       title: "¿Estás seguro(a)(e)?",
       text: "Una vez eliminado, ¡no podrá recuperar este registro!",
@@ -39,8 +45,10 @@ export function TablaPersonal({
       confirmButtonText: "Si, eliminar",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        console.log(p);
-        await eliminarCategoria({ id: p });
+        console.log("PARAMETROS DELETE PERSONAL",userId);
+        await PersonalService.delete(userId)
+        Swal.fire("Eliminado!", "El registro ha sido eliminado.", "success");
+        qc.invalidateQueries(['mostrar usuarios todos',null])
       }
     });
   }
@@ -66,9 +74,9 @@ export function TablaPersonal({
       header: "Tipo usuario",
       enableSorting: false,
       cell: (info) => (
-        <td data-title="Stock" className="ContentCell">
-          <span>{info.getValue()}</span>
-        </td>
+        
+        <span>{info.getValue()}</span>
+        
       ),
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
@@ -78,14 +86,19 @@ export function TablaPersonal({
       },
     },
     {
-      accessorKey: "estado",
-      header: "Estado",
+      accessorKey: "deleted_at",
+      header: "Fec. Eliminado",
       enableSorting: false,
-      cell: (info) => (
-        <td data-title="Stock" className="ContentCell">
-          <span>{info.getValue()}</span>
-        </td>
-      ),
+      cell: (info) => (info.getValue() ?
+        new Date(info.getValue()).toLocaleString({
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit"
+        })
+        :info.getValue()  
+    ),
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
         if (filterStatuses.length === 0) return true;
@@ -100,12 +113,12 @@ export function TablaPersonal({
       header: "",
       enableSorting: false,
       cell: (info) => (
-        <td data-title="Acciones" className="ContentCell">
+        
           <ContentAccionesTabla
             funcionEditar={() => editar(info.row.original)}
             funcionEliminar={() => eliminar(info.row.original.id)}
           />
-        </td>
+        
       ),
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
@@ -120,6 +133,7 @@ export function TablaPersonal({
     columns,
     state: {
       columnFilters,
+      globalFilter
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -139,6 +153,8 @@ export function TablaPersonal({
           )
         ),
     },
+    onGlobalFilterChange: setFlobalFilter,
+    globalFilterFn: 'includesString',
   });
   return (
     <>

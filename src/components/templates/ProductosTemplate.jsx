@@ -3,7 +3,7 @@ import { Header, Btnfiltro, v, RegistrarCategorias, Title, Lottieanimacion, Tabl
 import { useState } from "react";
 import vacio from "../../assets/vacio.json";
 export function ProductosTemplate({data}) {
-  const {setBuscador} = useProductosStore();
+  const { setGlobalFilter , globalFilter } = useProductosStore();
   const [state, setState] = useState(false);
   const [openRegistro, SetopenRegistro] = useState(false);
   const [accion, setAccion] = useState("");
@@ -41,7 +41,7 @@ export function ProductosTemplate({data}) {
         </ContentFiltro>
       </section>
       <section className="area2">
-        <Buscador setBuscador={setBuscador}/>
+        <Buscador setBuscador={setGlobalFilter}/>
       </section>
       <section className="main">
       {data.length == 0 && (

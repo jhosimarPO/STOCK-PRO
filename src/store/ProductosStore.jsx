@@ -50,4 +50,8 @@ export const useProductosStore = create((set, get) => ({
     set({ dataproductos: response });
     return response;
   },
+  globalFilter : '',
+  setGlobalFilter: (globalFilter) => {
+    set({ globalFilter });
+  },
 }));

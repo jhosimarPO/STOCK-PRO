@@ -3,7 +3,7 @@ import { Header, Btnfiltro, v,  Title, Lottieanimacion, TablaCategorias, Buscado
 import { useState } from "react";
 import vacio from "../../assets/vacio.json";
 export function KardexTemplate({data}) {
-  const {setBuscador} = useKardexStore();
+  const {setGlobalFilter} = useKardexStore();
   const [state, setState] = useState(false);
   const [openRegistro, SetopenRegistro] = useState(false);
   const [accion, setAccion] = useState("");
@@ -47,7 +47,7 @@ export function KardexTemplate({data}) {
         </ContentFiltro>
       </section>
       <section className="area2">
-        <Buscador setBuscador={setBuscador}/>
+        <Buscador setBuscador={setGlobalFilter}/>
       </section>
     
       <section className="main">

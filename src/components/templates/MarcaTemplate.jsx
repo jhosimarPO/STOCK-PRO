@@ -3,11 +3,12 @@ import { Header, Btnfiltro, v,  Title, Lottieanimacion, TablaCategorias, Buscado
 import { useState } from "react";
 import vacio from "../../assets/vacio.json";
 export function MarcaTemplate({data}) {
-  const {setBuscador} = useMarcaStore();
+  // const {setBuscador} = useMarcaStore();
   const [state, setState] = useState(false);
   const [openRegistro, SetopenRegistro] = useState(false);
   const [accion, setAccion] = useState("");
   const [dataSelect, setdataSelect] = useState([]);
+  const { setGlobalFilter } = useMarcaStore();
   function nuevoRegistro() {
     SetopenRegistro(!openRegistro);
     setAccion("Nuevo");
@@ -41,7 +42,7 @@ export function MarcaTemplate({data}) {
         </ContentFiltro>
       </section>
       <section className="area2">
-        <Buscador setBuscador={setBuscador}/>
+        <Buscador setBuscador={setGlobalFilter}/>
       </section>
       <section className="main">
       {data.length == 0 && (

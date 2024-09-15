@@ -28,7 +28,9 @@ export function TablaMarca({
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
 
-  const { eliminarMarca } = useMarcaStore();
+  const { globalFilter , setGlobalFilter , eliminarMarca } = useMarcaStore();
+  
+
   function eliminar(p) {
     if (p.descripcion === "Generica") {
       Swal.fire({
@@ -86,12 +88,12 @@ export function TablaMarca({
       header: "",
       enableSorting: false,
       cell: (info) => (
-        <td data-title="Acciones" className="ContentCell">
+        
           <ContentAccionesTabla
             funcionEditar={() => editar(info.row.original)}
             funcionEliminar={() => eliminar(info.row.original)}
           />
-        </td>
+        
       ),
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
@@ -106,6 +108,7 @@ export function TablaMarca({
     columns,
     state: {
       columnFilters,
+      globalFilter
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -125,6 +128,8 @@ export function TablaMarca({
           )
         ),
     },
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: 'includesString',
   });
   return (
     <>

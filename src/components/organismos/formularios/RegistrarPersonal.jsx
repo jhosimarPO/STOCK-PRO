@@ -81,6 +81,7 @@ export function RegistrarPersonal({
       // refetch()
       onClose();
     } else {
+      console.log("DATA ISNER PERSONAL",data)
       const p = {
         nombres: data.nombres,
         correo: data.correo,

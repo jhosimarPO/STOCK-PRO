@@ -12,12 +12,10 @@ export function Productos() {
   const { datapermisos } = usePermisosStore();
   console.log("datapermisos",datapermisos);
   
-  const statePermiso = datapermisos.some((objeto) =>
+  const statePermiso = datapermisos ? datapermisos.some((objeto) =>
     objeto.modulos.nombre.includes("Productos")
-  );
-if (statePermiso == false) {
-  return <BloqueoPagina state={statePermiso} />;
-} 
+  ) : false;
+
   const {mostrarProductos,dataproductos,buscador,buscarProductos} = useProductosStore()
   const {mostrarCategorias} = useCategoriasStore()
   const {mostrarMarca} = useMarcaStore()
@@ -30,7 +28,10 @@ if (statePermiso == false) {
   //mostrar categorias
   const {data:datacategorias} = useQuery({queryKey:["mostrar categorias",dataempresa.id],queryFn:()=>mostrarCategorias({idempresa:dataempresa.id})})
 
- 
+  if (statePermiso == false) {
+    return <BloqueoPagina state={statePermiso} />;
+  } 
+  
  if(isLoading){
   return <SpinnerLoader/>
  }

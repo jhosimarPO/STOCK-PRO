@@ -4,16 +4,17 @@ export const MostrarEmpresa = async (p) => {
   // const { data } = await supabase.rpc("mostrarempresaasignaciones", {
   //   _id_usuario: p.idusuario,
   // })
-  const { data ,error} = await supabase.from("asignarempresa").select('*').eq("id_usuario", p.idusuario)
-  .maybeSingle();
+  // const { data ,error} = await supabase.from("asignarempresa").select('*').eq("id_usuario", p.idusuario)
+  // .maybeSingle();
 
-  if(error){
-    console.error(error)
-    return []
-  }
-  if (data) {
-    return data;
-  }
+  // if(error){
+  //   console.error(error)
+  //   return []
+  // }
+  // if (data) {
+  //   return data;
+  // }
+  return []
 }
 
 export const ContarUsuariosXempresa = async (p) => {

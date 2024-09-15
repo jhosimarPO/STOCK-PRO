@@ -2,12 +2,14 @@ import styled from "styled-components";
 import { Header, Btnfiltro, v, RegistrarCategorias, Title, Lottieanimacion, TablaCategorias, Buscador, RegistrarMarca, TablaMarca, useMarcaStore, RegistrarPersonal, TablaPersonal } from "../../index";
 import { useState } from "react";
 import vacio from "../../assets/vacio.json";
+import { usePersonalStore } from "../../store/PersonalStore";
 export function PersonalTemplate({data}) {
   const {setBuscador} = useMarcaStore();
   const [state, setState] = useState(false);
   const [openRegistro, SetopenRegistro] = useState(false);
   const [accion, setAccion] = useState("");
   const [dataSelect, setdataSelect] = useState([]);
+  const { setGlobalFilter } = usePersonalStore();
   function nuevoRegistro() {
     SetopenRegistro(!openRegistro);
     setAccion("Nuevo");
@@ -41,7 +43,7 @@ export function PersonalTemplate({data}) {
         </ContentFiltro>
       </section>
       <section className="area2">
-        <Buscador setBuscador={setBuscador}/>
+        <Buscador setBuscador={setGlobalFilter}/>
       </section>
       <section className="main">
       {data.length == 0 && (

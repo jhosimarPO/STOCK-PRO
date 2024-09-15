@@ -3,10 +3,11 @@ import {
   ContentAccionesTabla,
   useCategoriasStore,
   Paginacion,
+  useKardexStore,
 } from "../../../index";
 import Swal from "sweetalert2";
 import { v } from "../../../styles/variables";
-import { useState } from "react";
+import { useState , Fragment } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -29,6 +30,7 @@ export function TablaKardex({
   const [columnFilters, setColumnFilters] = useState([]);
 
   const { eliminarCategoria } = useCategoriasStore();
+  const { globalFilter , setGlobalFilter } = useKardexStore()
   function eliminar(p) {
     Swal.fire({
       title: "¿Estás seguro(a)(e)?",
@@ -52,25 +54,14 @@ export function TablaKardex({
   }
   const columns = [
     {
-      accessorKey: "productos",
+      accessorKey: "productos.descripcion",
       header: "Producto",
-      cell: (info) => <span>{info.getValue().descripcion}</span>,
       enableColumnFilter: true,
-      // filterFn: (row, columnId, filterStatuses) => {
-      //   if (filterStatuses.length === 0) return true;
-      //   const status = row.getValue(columnId);
-      //   return filterStatuses.includes(status?.id);
-      // },
     },
     {
       accessorKey: "fecha",
       header: "Fecha",
       enableSorting: false,
-      cell: (info) => (
-        <td data-title="Fecha" className="ContentCell">
-          <span>{info.getValue()}</span>
-        </td>
-      ),
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
         if (filterStatuses.length === 0) return true;
@@ -83,11 +74,11 @@ export function TablaKardex({
       header: "Tipo",
       enableSorting: false,
       cell: (info) => (
-        <td data-title="Tipo" className="ContentCell">
+        <Fragment>
           {info.getValue() == "salida" ? (
             <Colorcontent
-              color="#ed4d4d"
-              className="contentCategoria"
+            color="#ed4d4d"
+            className="contentCategoria"
             >
               {info.getValue()}
             </Colorcontent>
@@ -95,11 +86,12 @@ export function TablaKardex({
             <Colorcontent
             color="#30c85b"
             className="contentCategoria"
-          >
+            >
             {info.getValue()}
           </Colorcontent>
           )}
-        </td>
+        </Fragment>
+        
       ),
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
@@ -113,9 +105,9 @@ export function TablaKardex({
       header: "Delle",
       enableSorting: false,
       cell: (info) => (
-        <td data-title="Usuario" className="ContentCell">
+        
           <span>{info.getValue()}</span>
-        </td>
+        
       ),
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
@@ -129,10 +121,7 @@ export function TablaKardex({
       header: "Usuario",
       enableSorting: false,
       cell: (info) => (
-        // <div data-title="Usuario" className="ContentCell">
           `${info.getValue().nombres}(${info.getValue().tipouser})`
-          // JSON.stringify(info.getValue())
-        // </div>
       ),
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
@@ -146,9 +135,9 @@ export function TablaKardex({
       header: "Cantidad",
       enableSorting: false,
       cell: (info) => (
-        <td data-title="Cantidad" className="ContentCell">
+        
           <span>{info.getValue()}</span>
-        </td>
+        
       ),
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
@@ -158,20 +147,10 @@ export function TablaKardex({
       },
     },
     {
-      accessorKey: "stock",
+      accessorKey: "productos.stock",
       header: "Stock",
       enableSorting: false,
-      cell: (info) => (
-        <td data-title="Usuario" className="ContentCell">
-          <span>{info.getValue()}</span>
-        </td>
-      ),
       enableColumnFilter: true,
-      filterFn: (row, columnId, filterStatuses) => {
-        if (filterStatuses.length === 0) return true;
-        const status = row.getValue(columnId);
-        return filterStatuses.includes(status?.id);
-      },
     },
   ];
   const table = useReactTable({
@@ -179,6 +158,7 @@ export function TablaKardex({
     columns,
     state: {
       columnFilters,
+      globalFilter
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -198,6 +178,8 @@ export function TablaKardex({
           )
         ),
     },
+    onGlobalFilterChange : setGlobalFilter,
+    globalFilterFn : 'includesString'
   });
   return (
     <>

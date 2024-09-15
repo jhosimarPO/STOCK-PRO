@@ -20,9 +20,7 @@ export async function InsertarPermisos(p) {
 
 }
 export async function MostrarPermisos(p) {
- 
-  console.log("PARAMS PERMISOS FETCH",p);
-  
+   
     const { data } = await supabase
       .from("permisos")
       .select(`id, id_usuario, idmodulo, modulos(nombre)`)

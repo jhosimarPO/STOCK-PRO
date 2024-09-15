@@ -49,4 +49,8 @@ export const useMarcaStore = create((set, get) => ({
     const response = await BuscarMarca(p);
     set({ datamarca: response });
   },
+  globalFilter : "",
+  setGlobalFilter : (text) => {
+    set({ globalFilter: text });
+  }
 }));

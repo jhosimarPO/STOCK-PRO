@@ -21,7 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Pedidos } from "../pages/Pedidos";
 export function MyRoutes() {
   const { user } = UserAuth();
-  const { mostrarUsuarios, datausuarios, idusuario } = useUsuariosStore();
+  const { mostrarUsuarios, datausuarios } = useUsuariosStore();
   const { mostrarEmpresa, contarusuariosXempresa } = useEmpresaStore();
   const {mostrarPermisos} = usePermisosStore();
   const {

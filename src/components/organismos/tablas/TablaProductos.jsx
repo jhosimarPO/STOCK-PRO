@@ -4,6 +4,7 @@ import {
   useCategoriasStore,
   Paginacion,
   useMarcaStore,
+  useProductosStore,
 } from "../../../index";
 import Swal from "sweetalert2";
 import { v } from "../../../styles/variables";
@@ -18,21 +19,23 @@ import {
 } from "@tanstack/react-table";
 import { FaArrowsAltV } from "react-icons/fa";
 import {Device} from "../../../styles/breakpoints"
+import { ProductoService } from "../../../services/ProductoService";
+import { useQueryClient } from "@tanstack/react-query";
 export function TablaProductos({
   data,
   SetopenRegistro,
   setdataSelect,
   setAccion,
 }) {
-  if (data?.length == 0) return;
+  
   const [pagina, setPagina] = useState(1);
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
-
-  const { eliminarCategoria } = useCategoriasStore();
   const { selectCategoria } = useCategoriasStore();
   const { selectMarca } = useMarcaStore()
-  function eliminar(p) {
+  const { globalFilter, setGlobalFilter } = useProductosStore();
+  const qc = useQueryClient()
+  function eliminar(productId) {
     Swal.fire({
       title: "¿Estás seguro(a)(e)?",
       text: "Una vez eliminado, ¡no podrá recuperar este registro!",
@@ -43,8 +46,8 @@ export function TablaProductos({
       confirmButtonText: "Si, eliminar",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        console.log(p);
-        await eliminarCategoria({ id: p });
+        await ProductoService.delete(productId);
+        qc.invalidateQueries(['buscar productos',''])
       }
     });
   }
@@ -67,11 +70,6 @@ export function TablaProductos({
       header: "Descripcion",
       cell: (info) => <span>{info.getValue()}</span>,
       enableColumnFilter: true,
-      filterFn: (row, columnId, filterStatuses) => {
-        if (filterStatuses.length === 0) return true;
-        const status = row.getValue(columnId);
-        return filterStatuses.includes(status?.id);
-      },
     },
 
     {
@@ -82,11 +80,6 @@ export function TablaProductos({
         <span>{info.getValue()}</span>
       ),
       enableColumnFilter: true,
-      filterFn: (row, columnId, filterStatuses) => {
-        if (filterStatuses.length === 0) return true;
-        const status = row.getValue(columnId);
-        return filterStatuses.includes(status?.id);
-      },
     },
     {
       accessorKey: "categorias",
@@ -108,11 +101,6 @@ export function TablaProductos({
       },
 
       enableColumnFilter: true,
-      filterFn: (row, columnId, filterStatuses) => {
-        if (filterStatuses.length === 0) return true;
-        const status = row.getValue(columnId);
-        return filterStatuses.includes(status?.id);
-      },
     },
     {
       accessorKey: "codigobarras",
@@ -124,43 +112,34 @@ export function TablaProductos({
         // </td>
       ),
       enableColumnFilter: true,
-      filterFn: (row, columnId, filterStatuses) => {
-        if (filterStatuses.length === 0) return true;
-        const status = row.getValue(columnId);
-        return filterStatuses.includes(status?.id);
-      },
     },
     {
       accessorKey: "precioventa",
       header: "Pr. venta",
       enableSorting: false,
-      cell: (info) => (
-        // <td data-title="Precio venta" className="ContentCell">
-          <span>{info.getValue()}</span>
-        // </td>
-      ),
       enableColumnFilter: true,
-      filterFn: (row, columnId, filterStatuses) => {
-        if (filterStatuses.length === 0) return true;
-        const status = row.getValue(columnId);
-        return filterStatuses.includes(status?.id);
-      },
     },
     {
       accessorKey: "preciocompra",
       header: "Pr. de compra",
       enableSorting: false,
-      cell: (info) => (
-        // <td data-title="Precio compra" className="ContentCell">
-          <span>{info.getValue()}</span>
-        // </td>
-      ),
       enableColumnFilter: true,
-      filterFn: (row, columnId, filterStatuses) => {
-        if (filterStatuses.length === 0) return true;
-        const status = row.getValue(columnId);
-        return filterStatuses.includes(status?.id);
-      },
+    },
+    {
+      accessorKey: "deleted_at",
+      header: "Fec. eliminado",
+      enableSorting: false,
+      enableColumnFilter: true,
+      cell : (info) => info.getValue() ? (new Date(info.getValue())
+        .toLocaleString({
+          year : 'numeric' ,
+          month : '2-digit' ,
+          day : '2-digit' ,
+          hourCycle : 'h12' , 
+          hour : '2-digit' , 
+          minute : '2-digit' , 
+          second : '2-digit'
+      })) : info.getValue()
     },
     {
       accessorKey: "acciones",
@@ -175,11 +154,6 @@ export function TablaProductos({
         </div>
       ),
       enableColumnFilter: true,
-      filterFn: (row, columnId, filterStatuses) => {
-        if (filterStatuses.length === 0) return true;
-        const status = row.getValue(columnId);
-        return filterStatuses.includes(status?.id);
-      },
     },
   ];
   const table = useReactTable({
@@ -187,6 +161,7 @@ export function TablaProductos({
     columns,
     state: {
       columnFilters,
+      globalFilter
     },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -206,7 +181,12 @@ export function TablaProductos({
           )
         ),
     },
+    onGlobalFilterChange : setGlobalFilter,
+    globalFilterFn : 'includesString'
   });
+
+  if (data?.length == 0) return;
+
   return (
     <>
       <Container>

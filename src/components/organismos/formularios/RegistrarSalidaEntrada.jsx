@@ -28,6 +28,8 @@ export function RegistrarSalidaEntrada({ onClose, dataSelect, accion, tipo }) {
 
   const { insertarKardex } = useKardexStore();
   const { dataempresa } = useEmpresaStore();
+
+  const [realUser, setRealUser] = useState({});
   const {
     register,
     formState: { errors },
@@ -46,7 +48,7 @@ export function RegistrarSalidaEntrada({ onClose, dataSelect, accion, tipo }) {
       const p = {
         fecha: new Date(),
         tipo: tipo,
-        id_usuario: idusuario,
+        id_usuario: realUser?.id,
         id_producto: productoItemSelect.id,
         cantidad:parseFloat( data.cantidad),
         detalle: data.detalle,
@@ -56,6 +58,10 @@ export function RegistrarSalidaEntrada({ onClose, dataSelect, accion, tipo }) {
       onClose();
     }
   }
+
+  useEffect(() => {
+    setRealUser(JSON.parse(localStorage.getItem("userLogged") || '{}'))
+  })
  
   return (
     <Container>

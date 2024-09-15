@@ -16,8 +16,10 @@ export const useAuthStore = create((set) => ({
     return data.user;
   },
   signout: async () => {
+    console.log("signout");
     const { error } = await supabase.auth.signOut()
     set({ isAuth: false });
+    localStorage.setItem("userLogged", '{}');
     if (error)
       throw new Error("A ocurrido un error durante el cierre de sesión"+error);
   },

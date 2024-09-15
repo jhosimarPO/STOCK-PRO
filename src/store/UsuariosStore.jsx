@@ -97,6 +97,7 @@ export const useUsuariosStore = create((set, get) => ({
       nro_doc: p.nrodoc,
       telefono: p.telefono,
       direccion: p.direccion,
+      correo : p.correo,
       fecharegistro: new Date(),
       estado: "activo",
       idauth: data.user.id,
@@ -104,7 +105,7 @@ export const useUsuariosStore = create((set, get) => ({
       tipodoc: p.tipodoc,
     });
     await InsertarAsignaciones({
-      id_empresa: p.id_empresa,
+      id_empresa: 1,
       id_usuario: dataUserNew.id,
     });
     console.log("arroja", dataUserNew);
@@ -118,7 +119,7 @@ export const useUsuariosStore = create((set, get) => ({
       }
     });
 
-    await supabase.auth.signOut();
+    // await supabase.auth.signOut();
     return data.user;
   },
 }));

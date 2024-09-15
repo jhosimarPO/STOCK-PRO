@@ -22,6 +22,7 @@ import carrito from "../../assets/carrito.svg";
 import logo from "../../assets/inventarioslogo.png";
 import { MdOutlineInfo } from "react-icons/md";
 import { ThemeContext } from "../../App";
+import { UsuarioService } from "../../services/UsuarioService";
 export function LoginTemplate() {
   const { setTheme, theme } = useContext(ThemeContext);
   setTheme("light")
@@ -53,6 +54,8 @@ export function LoginTemplate() {
       pass: data.pass,
     });
     if (response) {
+      const userLogged = await UsuarioService.findByEmail(response.email)
+      localStorage.setItem("userLogged", JSON.stringify(userLogged))
       navigate("/");
     } else {
       setStateInicio(!stateInicio);

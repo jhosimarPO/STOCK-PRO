@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { BuscarKardex, InsertarKardex, MostrarKardex } from "../index";
+import { GlobalFiltering } from "@tanstack/react-table";
 export const useKardexStore = create((set, get) => ({
   buscador: "",
   setBuscador: (p) => {
@@ -25,5 +26,9 @@ export const useKardexStore = create((set, get) => ({
     const response = await BuscarKardex(p);
     set({ datakardex: response });
     return response;
+  },
+  globalFilter : '',
+  setGlobalFilter: (globalFilter) => {
+    set({ globalFilter })
   },
 }));

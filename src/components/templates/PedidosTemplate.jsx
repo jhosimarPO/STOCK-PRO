@@ -4,12 +4,17 @@ import { useState } from "react";
 import { PedidosService } from "../../services/PedidosService";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { TablaPedidos } from "../organismos/tablas/TablaPedidos";
+import { useStorePedidos } from "../../store/PedidoStore";
 export function PedidosTemplate() {
   
+  
+
   const [openRegistro, SetopenRegistro] = useState(false);
   const [dataSelect, setdataSelect] = useState([])
   const qc = useQueryClient()
   const [state, setState] = useState(false);
+
+  const { globalFilter , setGlobalFilter} = useStorePedidos()
   const { data, isLoading, error } = useQuery({
     queryKey: ["pedidos/listar"],
     queryFn: () => PedidosService.list(),
@@ -40,7 +45,7 @@ export function PedidosTemplate() {
         </ContentFiltro>
       </section>
       <section className="area2">
-        {/* <Buscador setBuscador={setBuscador}/> */}
+        <Buscador setBuscador={setGlobalFilter}/>
         
       </section>
     

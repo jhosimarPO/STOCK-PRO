@@ -21,10 +21,15 @@ import { TbTruckDelivery  } from 'react-icons/tb'
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PedidosService } from "../../../services/PedidosService";
 
+
+
 export function TablaPedidos({entities}) {
+
+  
+
   const [pagina, setPagina] = useState(1)
   const qc = useQueryClient()
-  // const {  } = useStorePedidos();
+  const { globalFilter , setGlobalFilter } = useStorePedidos();
   const {mutate : mutateEnviar} = useMutation({
     mutationFn: PedidosService.sendOrder,
     onError: (error) => {
@@ -36,31 +41,19 @@ export function TablaPedidos({entities}) {
     },
   })
 
-  function eliminar(p) {
-    if (p.descripcion === "General") {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Esteregistro no se permite modificar ya que es valor por defecto.",
-        footer: '<a href="">...</a>',
-      });
-      return;
-    }
-    Swal.fire({
-      title: "¿Estás seguro(a)(e)?",
-      text: "Una vez eliminado, ¡no podrá recuperar este registro!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Si, eliminar",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        console.log("ELIMINAR",p);
-        // await eliminarCategoria({ id: p.id });
-      }
-    });
+  function customFilterFn(row, columnId, filterValue) {
+    console.warn(row,columnId,filterValue)
+    const user = row.getValue(columnId);
+    
+    // Si la propiedad 'usuarios' es un objeto con 'nro_doc' y 'nombres'
+    const nroDocMatch = user.nro_doc.toLowerCase().includes(filterValue.toLowerCase());
+    const nombresMatch = user.nombres.toLowerCase().includes(filterValue.toLowerCase());
+    
+    // Devuelve true si coincide en cualquiera de los dos campos
+    return nroDocMatch || nombresMatch;
   }
+
+  
   function editar(data) {
     console.log("EDITAR",data)
     mutateEnviar(data.id)
@@ -81,9 +74,14 @@ export function TablaPedidos({entities}) {
       enableColumnFilter: true,
     },
     {
-      accessorKey: "usuarios",
+      accessorKey: "usuarios.nro_doc",
+      header: "DNI",
+      enableColumnFilter: true,
+      
+    },
+    {
+      accessorKey: "usuarios.nombres",
       header: "Cliente",
-      cell: (info) => `DNI:${info.getValue().nro_doc} - ${info.getValue().nombres}`,
       enableColumnFilter: true,
     },
 
@@ -134,6 +132,9 @@ export function TablaPedidos({entities}) {
   const table = useReactTable({
     data : entities,
     columns,
+    state : {
+      globalFilter,
+    },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -152,6 +153,8 @@ export function TablaPedidos({entities}) {
           )
         ),
     },
+    onGlobalFilterChange : setGlobalFilter,
+    globalFilterFn : 'includesString'
   });
   return (
     <>

@@ -1,10 +1,11 @@
 import { create } from "zustand";
 
 export const useStorePedidos = create((set, get) => ({
-  buscador: "",
+  globalFilter: "",
   entities : [],
-  setBuscador: (p) => {
-    set({ buscador: p });
+
+  setGlobalFilter: (globalFilter) => {
+    set({ globalFilter });
   },
   
   loadEntities: async (entities) => {
